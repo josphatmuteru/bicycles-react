@@ -25,6 +25,7 @@ border: solid 1px #333;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  background-color: #fff;
 
   .date {
     font-size: .8rem;
@@ -352,6 +353,7 @@ input[type=range] {
   -webkit-appearance: none;
   margin: 10px 0;
   width: 100%;
+  background-color: #F2F6FF;
 }
 input[type=range]:focus {
   outline: none;

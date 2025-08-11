@@ -7,7 +7,9 @@ flex-direction: column;
 gap: .5rem;
 width: 100%;
 
-
+span {
+  font-size: 0.875rem;
+}
 `
 
 const ButtonGrid = styled.div`
