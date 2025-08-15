@@ -1,16 +1,186 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+import { FaArrowLeftLong, FaLeftLong, FaRightLong } from 'react-icons/fa6';
+import styled, { css } from 'styled-components';
+import { BackButton } from './BicycleDisplayFrame';
+import { breakpoints } from './Ui/AppLayout';
+
+const StyledTimeSelectorContainer = styled.div`
+display: flex;
+flex-direction: column;
+gap: .5rem;
+width: 100%;
+
+span {
+  font-size: 0.875rem;
+
+}
+
+`
+
+const HeaderRow = styled.div`
+display: flex;
+flex-direction: row;
+gap: 1rem;
+padding-bottom: 1.5rem;
+border-bottom: 0.5px solid #696969;
+
+@media (min-width: ${breakpoints.mobile}) {
+display: none;
+}
+
+`
+const HeaderDetails = styled.div`
+display: flex;;
+flex-direction: column;
+gap: 0.25rem;
+
+.day {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+.date, .duration {
+  font-weight: 400;
+  color: #444;
+}
+`
 
 
-// const Container = styled.div`
-//   width: auto;
-//   height: 100vh;
-//   margin: auto;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   background-color: #fefefe;
-// `
+const ContentRow = styled.div`
+display: flex;
+flex-direction: column;
+width: 100%;
+gap: .5rem;
+
+
+@media (min-width: ${breakpoints.mobile}) {
+
+margin-top: 1rem;  
+height: 100%;
+justify-content: end;
+}
+`
+
+const OverflowContainer = styled.div`
+max-height: 590px;
+/* padding: 0 0.5rem; */
+overflow: auto;
+width: 100%;
+
+@media (min-width: ${breakpoints.mobile}) {
+  height: 100%;
+}
+
+@media (max-width: ${breakpoints.mobile}) {
+  max-height: 29rem;
+}
+
+
+`
+
+
+const TimeButtonsGrid = styled.div`
+display: flex;
+flex-direction: column;
+border: 1px solid #333;
+background-color: #333;
+border-radius: 2px;
+gap: 1px;
+
+
+`
+
+
+const TimeItem = styled.div`
+display: flex;
+flex-direction: row;
+gap: 1px;
+height: 100%;
+`
+
+const NextButton = styled.button`
+border: none;
+display: flex;
+display: none;
+background: #fff;
+align-items: center;
+justify-content: center;
+width: 100%;
+
+&:active {
+    transform: scale(0.99);
+    background: #8AD9FE;
+  }
+
+&:hover {
+
+  background: rgba(189, 232, 253);
+  }
+
+
+
+`
+
+const TimeButton = styled.button`
+display: flex;
+align-items: center;
+justify-content: center;
+width: 100%;
+font-weight: 500;
+height: 36px;
+border: none;
+    border-radius: 0.5px ;
+    background: ${props => props.$isSelected ? "#8AD9FE" : '#fff' } ;
+
+    &:hover {
+      background: ${props => props.$isSelected ? '#8ad9fe' : 'rgba(189, 232, 253)'};
+  }
+
+
+    &:focus {
+${props => props.$isSelected ? 
+css`
+  outline: none;
+` 
+:
+
+css`
+  outline: 2px solid #4fa1d9;
+  outline-offset: -2px;
+  z-index: 1;
+`}
+
+
+  }
+  
+  /* Active States */
+  &:active {
+    transform: scale(0.99);
+  }
+
+  &:first-child {
+border-radius: 1px 1px 0.5px 0.5px;
+  }
+
+  &:last-child {
+border-radius:  0.5px 0.5px 1px  1px ;
+  }
+
+  ${props => props.$isSelected ? 
+css`
+border-radius: 1px 0 0  1px  !important;
+
+
+& + button {
+  display: flex !important;
+  border-radius: 0  1px 1px 0    !important;
+}
+` 
+: ''
+  }
+
+`
 
 const TimeLineContainer = styled.div`
 border: solid 1px #333;
@@ -561,6 +731,10 @@ const desiredBookingDateFormatted = desiredBookingDate.toLocaleDateString('en-us
  const sliderHandleRef = useRef(null)
  const sliderRailRef = useRef(null)
 
+
+const [selectedTime, setSelectedTime] = useState(null)
+
+
  const [spanWidth, setSpanWidth] = useState(0)
  const [hovered, setHovered] = useState(false);
  const [selectorLeftPosition, setSelectorLeftPosition] = useState(0)
@@ -714,27 +888,27 @@ const displayDigits = [
 
 
   const bookedHours = [
-    {
-      startingFrom: '0900',
-      endingAt: '1000',
-      bookedPeriodDurationInHours: 1,
-      backgroundColor: '#3a343273',
-    },
+    // {
+    //   startingFrom: '0900',
+    //   endingAt: '1000',
+    //   bookedPeriodDurationInHours: 1,
+    //   backgroundColor: '#3a343273',
+    // },
   
 
-      {
-      startingFrom: '1030',
-      endingAt: '1130',
-      bookedPeriodDurationInHours:1,
-      backgroundColor: '#1811f29d',
-    },
+    //   {
+    //   startingFrom: '1030',
+    //   endingAt: '1130',
+    //   bookedPeriodDurationInHours:1,
+    //   backgroundColor: '#1811f29d',
+    // },
 
-    {
-      startingFrom: '1200',
-      endingAt: '1300',
-      bookedPeriodDurationInHours:1,
-      backgroundColor: '#f7653473',
-    },
+    // {
+    //   startingFrom: '1200',
+    //   endingAt: '1300',
+    //   bookedPeriodDurationInHours:1,
+    //   backgroundColor: '#f7653473',
+    // },
 
 
   ];
@@ -817,128 +991,166 @@ console.log('dddddddd',  currentDate.getHours(), availableQuarterHourUnits, (per
     defaultBookingSlots= []
 
   return (
-    
-    <TimeLineContainer>
-    <div className="date">
-      <span>{desiredBookingDateFormatted}</span>
-    </div>
-    <TimelineBox>
-      <TimeLine ref={timelineRef}>
-       {
-        hours.map((hour) => {
-          return (
-            <OneHourUnit>
-            <OneHourUnitInnerContainer>
+<StyledTimeSelectorContainer>
+<HeaderRow>
+  <BackButton>
+    <FaArrowLeftLong/>
+  </BackButton>
+  <HeaderDetails>
+    <span className='day'>Wednesday</span>
+    <span className='date'>Oct 30, 2024</span>
+    <span className='duration'>Duration: 2 hours</span>
+  </HeaderDetails>
+</HeaderRow>
 
+<ContentRow>
+<span>Select a Time</span>
+<OverflowContainer>
+  <TimeButtonsGrid>
+    {
+      availableQuarterHourUnits.map(quarterHour => {
+        const displayTime = `${(performTimeAddition('0000', quarterHour/60)).slice(0, 2)}:${(performTimeAddition('0000', quarterHour/60)).slice(2)}`
+        return (
+          <TimeItem>
 
-              
-              {hour[Object.keys(hour)[0]].map((halfHour) => {
-              
-                return (  
-                  
-                  <HalfHourUnit>
-                  {
-                    halfHour.map(quarterHour => {
-                      const isDisplayDigit = displayDigits.includes(quarterHour)
-             
-                      const bookingOfInterest = bookedHours.find(booking =>  convertTimeStringToMinutesAfterMidnight(quarterHour) >= convertTimeStringToMinutesAfterMidnight(booking.startingFrom) && convertTimeStringToMinutesAfterMidnight(quarterHour) < convertTimeStringToMinutesAfterMidnight(booking.endingAt))
+            <TimeButton 
+            $isSelected = {selectedTime == quarterHour}
+             onClick={() => setSelectedTime(quarterHour)}>{displayTime}</TimeButton>
+             <NextButton>Next</NextButton>
+          </TimeItem>
 
-
-                   return (
-                    
-                  <QuarterHourUnit onMouseEnter={() => handleMouseEnter(quarterHour)}   ref={spanRef} id={quarterHour}  $backgroundColor={bookingOfInterest?.backgroundColor}  className={`${ isDisplayDigit ? 'quarter-hour-unit quarter-hour-unit--with-digit' : ''}`}>
-                  {quarterHour == '0900' ? <span class="meridiem meridiem-am">AM</span> : quarterHour == '1200' ? <span class="meridiem meridiem-pm">PM</span> : ''  }
-                
-                  {quarterHour == '1745'  ? <><span ></span>  <span class="hour-digit--last-digit">6</span> </> : isDisplayDigit ? <span class="hour-digit">{convertToTwelveHourSystem(quarterHour).split(':')[0]}</span> : '' }
-                  </QuarterHourUnit>
- 
-                   )
-                    })
-                  }
-                  
-                </HalfHourUnit>)
-              })}
-           
-            </OneHourUnitInnerContainer>
-          </OneHourUnit>
-          )
-        })
-       }
-
-       {
-        bookedHours.map(booking => {
-const differenceInMinutes = (convertTimeStringToMinutesAfterMidnight(booking.startingFrom)) - convertTimeStringToMinutesAfterMidnight('0900')
-const leftPosition = (differenceInMinutes / 540) * 100;
-const width = (spanWidth * ((booking.bookedPeriodDurationInHours * 60) / 15)) +( ((booking.bookedPeriodDurationInHours * 60) / 15) * 1) - 1
-
-          return (
-<>
-
-
-<ExistingBooking $leftPosition={leftPosition} $width={width} $backgroundColor={booking.backgroundColor} key={booking.startingFrom}>
-<span className='booked-period-label' >Booked</span>
-</ExistingBooking>
-</>
-
-          )
-        })
-       }
-
-       {
-                defaultBookingSlots.map(booking => {
-                  const differenceInMinutes = (convertTimeStringToMinutesAfterMidnight(booking[0])) - convertTimeStringToMinutesAfterMidnight('0900')
-                  const leftPosition = (differenceInMinutes / 540) * 100;
-                  const width = (spanWidth * ((desiredBookingDuration * 60) / 15)) +( ((desiredBookingDuration * 60) / 15) * 1) - 1
-                  
-                            return (
-                  <>
-                  
-                  
-                  <DefaultBookingSlot $leftPosition={leftPosition} $width={width} key={booking[0]}>
-                  <span className='booked-period-label' >Available</span>
-                  </DefaultBookingSlot>
-                  </>
-                  
-                            )
-                          })
-       }
-      </TimeLine>
-      <DurationSelector $leftPosition={selectorLeftPosition} $width={selectorWidth}>
-        <span className='highlighted-period-label'>{highlightedPeriod}</span>
-      </DurationSelector>
-      {/* <ExistingBooking></ExistingBooking> */}
-    </TimelineBox>
-
-    {/* <Slider ref={sliderRailRef} $width={timelineRef.current?.getBoundingClientRect().width} $leftPosition={selectorLeftPosition}>
-     {
-      hours.map(hour => {
-        return hour[Object.keys(hour)[0]].map(halfHour => {
-         return halfHour.map(quarterHour => {
-            return (
-              <SliderQuarterHourUnit onDragOver={() => handleDragOver(quarterHour)} $width={spanWidth} ></SliderQuarterHourUnit>
-            )
-          })
-        })
+        )
       })
-     }
-     
-      <span draggable='true' ref={sliderHandleRef} className='slider-handle'></span>
-    </Slider> */}
-    <Slider2>
+    }
+  </TimeButtonsGrid>
 
-    <input type="range"
-            id="myRange"
-            min="0"
-            max="540"
-            step='15'
-            
-            // value={((convertTimeStringToMinutesAfterMidnight(currentSelectorStartPosition) - (convertTimeStringToMinutesAfterMidnight('0900'))))}
-onChange={handleSliderChange}
+</OverflowContainer>
+
+</ContentRow>
+</StyledTimeSelectorContainer>
+
     
-    />
-    </Slider2>
-         <label htmlFor="myRange">{currentSelectorStartPosition}</label>
-    </TimeLineContainer>
+//     <TimeLineContainer>
+//     <div className="date">
+//       <span>{desiredBookingDateFormatted}</span>
+//     </div>
+//     <TimelineBox>
+//       <TimeLine ref={timelineRef}>
+//        {
+//         hours.map((hour) => {
+//           return (
+//             <OneHourUnit>
+//             <OneHourUnitInnerContainer>
+
+
+              
+//               {hour[Object.keys(hour)[0]].map((halfHour) => {
+              
+//                 return (  
+                  
+//                   <HalfHourUnit>
+//                   {
+//                     halfHour.map(quarterHour => {
+//                       const isDisplayDigit = displayDigits.includes(quarterHour)
+             
+//                       const bookingOfInterest = bookedHours.find(booking =>  convertTimeStringToMinutesAfterMidnight(quarterHour) >= convertTimeStringToMinutesAfterMidnight(booking.startingFrom) && convertTimeStringToMinutesAfterMidnight(quarterHour) < convertTimeStringToMinutesAfterMidnight(booking.endingAt))
+
+
+//                    return (
+                    
+//                   <QuarterHourUnit onMouseEnter={() => handleMouseEnter(quarterHour)}   ref={spanRef} id={quarterHour}  $backgroundColor={bookingOfInterest?.backgroundColor}  className={`${ isDisplayDigit ? 'quarter-hour-unit quarter-hour-unit--with-digit' : ''}`}>
+//                   {quarterHour == '0900' ? <span class="meridiem meridiem-am">AM</span> : quarterHour == '1200' ? <span class="meridiem meridiem-pm">PM</span> : ''  }
+                
+//                   {quarterHour == '1745'  ? <><span ></span>  <span class="hour-digit--last-digit">6</span> </> : isDisplayDigit ? <span class="hour-digit">{convertToTwelveHourSystem(quarterHour).split(':')[0]}</span> : '' }
+//                   </QuarterHourUnit>
+ 
+//                    )
+//                     })
+//                   }
+                  
+//                 </HalfHourUnit>)
+//               })}
+           
+//             </OneHourUnitInnerContainer>
+//           </OneHourUnit>
+//           )
+//         })
+//        }
+
+//        {
+//         bookedHours.map(booking => {
+// const differenceInMinutes = (convertTimeStringToMinutesAfterMidnight(booking.startingFrom)) - convertTimeStringToMinutesAfterMidnight('0900')
+// const leftPosition = (differenceInMinutes / 540) * 100;
+// const width = (spanWidth * ((booking.bookedPeriodDurationInHours * 60) / 15)) +( ((booking.bookedPeriodDurationInHours * 60) / 15) * 1) - 1
+
+//           return (
+// <>
+
+
+// <ExistingBooking $leftPosition={leftPosition} $width={width} $backgroundColor={booking.backgroundColor} key={booking.startingFrom}>
+// <span className='booked-period-label' >Booked</span>
+// </ExistingBooking>
+// </>
+
+//           )
+//         })
+//        }
+
+//        {
+//                 defaultBookingSlots.map(booking => {
+//                   const differenceInMinutes = (convertTimeStringToMinutesAfterMidnight(booking[0])) - convertTimeStringToMinutesAfterMidnight('0900')
+//                   const leftPosition = (differenceInMinutes / 540) * 100;
+//                   const width = (spanWidth * ((desiredBookingDuration * 60) / 15)) +( ((desiredBookingDuration * 60) / 15) * 1) - 1
+                  
+//                             return (
+//                   <>
+                  
+                  
+//                   <DefaultBookingSlot $leftPosition={leftPosition} $width={width} key={booking[0]}>
+//                   <span className='booked-period-label' >Available</span>
+//                   </DefaultBookingSlot>
+//                   </>
+                  
+//                             )
+//                           })
+//        }
+//       </TimeLine>
+//       <DurationSelector $leftPosition={selectorLeftPosition} $width={selectorWidth}>
+//         <span className='highlighted-period-label'>{highlightedPeriod}</span>
+//       </DurationSelector>
+//       {/* <ExistingBooking></ExistingBooking> */}
+//     </TimelineBox>
+
+//     {/* <Slider ref={sliderRailRef} $width={timelineRef.current?.getBoundingClientRect().width} $leftPosition={selectorLeftPosition}>
+//      {
+//       hours.map(hour => {
+//         return hour[Object.keys(hour)[0]].map(halfHour => {
+//          return halfHour.map(quarterHour => {
+//             return (
+//               <SliderQuarterHourUnit onDragOver={() => handleDragOver(quarterHour)} $width={spanWidth} ></SliderQuarterHourUnit>
+//             )
+//           })
+//         })
+//       })
+//      }
+     
+//       <span draggable='true' ref={sliderHandleRef} className='slider-handle'></span>
+//     </Slider> */}
+//     <Slider2>
+
+//     <input type="range"
+//             id="myRange"
+//             min="0"
+//             max="540"
+//             step='15'
+            
+//             // value={((convertTimeStringToMinutesAfterMidnight(currentSelectorStartPosition) - (convertTimeStringToMinutesAfterMidnight('0900'))))}
+// onChange={handleSliderChange}
+    
+//     />
+//     </Slider2>
+//          <label htmlFor="myRange">{currentSelectorStartPosition}</label>
+//     </TimeLineContainer>
   
 
   )

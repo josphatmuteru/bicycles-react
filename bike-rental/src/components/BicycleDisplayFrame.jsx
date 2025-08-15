@@ -42,7 +42,7 @@ border-bottom: 0.5px solid #696969;
 
 `
 
-const BackButton  = styled.div`
+export const BackButton  = styled.div`
 background: none;
 border: 1px solid #333;
 padding:0.25rem  0.5rem;
@@ -55,7 +55,7 @@ justify-content: center;
 
 const StyledImage = styled.img`
 height: auto;
-
+background-color: #fff;
 width: 150px ;
 border: 1px solid #333;
 padding:0 8px;

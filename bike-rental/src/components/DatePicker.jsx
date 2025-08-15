@@ -13,8 +13,8 @@ flex-direction: column;
 gap: .5rem;
 
 width: 100%;
-height: 22rem;
-border-radius: 2px;
+/* height: 22rem; */
+/* border-radius: 2px; */
 
 span {
   font-size: 0.875rem;
@@ -41,7 +41,7 @@ span {
 
 
 
-export default function CustomDatePicker() {
+export default function CustomDatePicker({selectedDate, setSelectedDate}) {
   const [startDate, setStartDate] = useState(new Date())
 
   return (
@@ -51,7 +51,7 @@ export default function CustomDatePicker() {
         <StyledDatePicker>
       <DatePicker
         selected={startDate}
-        onChange={(date) => setStartDate(date)}
+        onChange={(date) => {setStartDate(date); setSelectedDate(date)}}
         inline
         formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 3).toUpperCase()}
         renderCustomHeader={({
